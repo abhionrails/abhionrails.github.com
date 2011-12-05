@@ -1,0 +1,13 @@
+<div class="post-nav">
+  {% if post.next.url != null %}
+  <div class="post-newer">
+    <a class="small" href="{{ post.next.url }}">{{post.next.title | truncate:30}} &rarr;</a>
+  </div>
+  {% endif %}
+  {% if post.previous.url != null %}
+  <div class="post-older">
+    <a class="small" href="{{ post.previous.url }}">&larr; {{post.previous.title | truncate:30}}</a>
+  </div>
+  {% endif %}
+  <hr />
+</div>

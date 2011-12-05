@@ -1,0 +1,98 @@
+---           
+layout: post
+title: marked for destruction
+date: Fri Nov 04 17:04:00 UTC 2011
+comments: false
+categories: ruby marked for destruction auto save association auto save ruby on rails rails marked_for_destruction active record base
+---
+
+<div dir="ltr" style="text-align: left;" trbidi="on">
+  Today I had gone through an issue, which got fixed by using the
+  marked_for_destruction? method. This marked_for_destruction is part
+  of Active Record Autosave Association module. Autosave Association
+  module takes care of automatically saving associated records when
+  their parent is saved. For more details see
+  <a href="http://api.rubyonrails.org/classes/ActiveRecord/AutosaveAssociation.html">
+    Auto Save Association
+  </a>.
+  <br /><br />
+  In my project I have a model called Directory and it has many
+    Categories. But I have to add a validation that there should be
+    atleast one category associated with the directory. So in the
+    directory model I added a validation in the after_save callback,
+    which will check the count of Categories is greater that 0.
+  <br /><br />
+  But while we do the update directory if I deleted all the
+    categories&nbsp;the validation won't work , because I am using
+    Autosave Association, which &nbsp;saves category only after
+    directory got saved. So at the time of Directory got saved the
+    category count was greater than one, so validation will pass. To
+    fix this issue I changed the condition that the categories count
+    should be greater than 1. This is handled in the Directory model,
+    and I want to let the controller know about the Directory not get
+    saved. For that I will throw an exception if the condition fails.
+  <br /><br />
+  <span class="Apple-style-span" style="color: #cc0000; font-family:
+                                        'Courier New', Courier,
+                                        monospace;">after_save:
+    check_categories_count</span>
+  <br /><br />
+  <span class="Apple-style-span" style="color: #cc0000; font-family:
+                                        'Courier New', Courier,
+                                        monospace;">
+    def &nbsp;check_categories_count
+  </span>
+  <br />
+  <span class="Apple-style-span" style="color: #cc0000; font-family:
+                                        'Courier New', Courier,
+                                        monospace;">
+    &nbsp; &nbsp;if self.categories.count &lt;= 1
+  </span>
+  <br />
+  <span class="Apple-style-span" style="color: #cc0000; font-family:
+                                        'Courier New', Courier,
+                                        monospace;">
+    &nbsp; &nbsp; &nbsp; throw Exception
+  </span>
+  <br />
+  <span class="Apple-style-span" style="color: #cc0000; font-family:
+                                        'Courier New', Courier,
+                                        monospace;">
+    &nbsp; &nbsp;end
+  </span>
+  <br />
+  <span class="Apple-style-span" style="color: #cc0000; font-family:
+                                        'Courier New', Courier,
+                                        monospace;">
+    end
+  </span>
+  <br /><br />
+  Since the condition is checking for categories greater than 1 this
+  will fail for update with only one category. Because on update also
+  it will execute the after_save and there is only 1 category
+  associated with this directory. But it should fail if we are
+  deleting the only one category. So I added one more condition that
+  checks if the only one category is marked for delete. So the
+  condition becomes:
+  <br /><br />
+  <span class="Apple-style-span" style="color: #cc0000; font-family:
+  'Courier New', Courier, monospace;">
+    if self.categories.first.nil? ||
+    self.categories.first.maked_for_destruction?
+  </span>
+  <br />
+  <span class="Apple-style-span" style="color: #cc0000; font-family:
+                                        'Courier New', Courier,
+                                        monospace;">
+    &nbsp; &nbsp;throw Exception
+  </span>
+  <br />
+  <span class="Apple-style-span" style="color: #cc0000; font-family:
+                                        'Courier New', Courier,
+                                        monospace;">
+    end
+  </span>
+  <br /><br />
+  Now it will fail only if the user tries to delete the last category.
+  <br /><br />
+</div>

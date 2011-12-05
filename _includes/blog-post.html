@@ -1,0 +1,18 @@
+<article>
+<header>
+  <time datetime="{{ post.date | date: "%Y-%m-%d" }}" pubdate="pubdate" class="post-date">
+    {{ post.date | date: "%b %d, %Y" }}
+  </time>
+  <h1><a href="{{ post.url }}">{{ post.title }}</a></h1>
+</header>
+{% if content %}
+{{ content }}
+{% else %}
+{{ post.content }}
+{% endif %}
+{% include share_this.html %}
+{% include disqus.html %}
+{% include post-nav.html %}
+</article>
+
+

@@ -1,0 +1,25 @@
+---
+layout: default
+title: Abhi On Rails
+---
+
+{% for post in paginator.posts %}
+<article class="excerpt">
+<header>
+<time datetime="{{ post.date | date: "%Y-%m-%d" }}" pubdate="pubdate" class="post-date">
+{{ post.date | date: "%b %d, %Y" }}
+</time>
+<h1><a href="{{site.baseurl}}{{ post.url }}">{{ post.title }}</a></h1>
+</header>
+
+{{ post.content }}
+{% include share_this.html %}
+<p class="full-post"><a class="small" href="{{site.baseurl}}{{ post.url }}#disqus_thread">comments...</a></p>
+</article>
+<div class="separator">
+<image src="{{site.baseurl}}/images/blog-post-separator.png" />
+</div>
+{% endfor %}
+{% include blog-nav.html %}
+
+
