@@ -1,0 +1,43 @@
+---           
+layout: post
+title: Devise with token based authentication for API
+date: Sun Sep 01 14:14:00 UTC 2013
+comments: false
+categories: ruby rails devise token based authentication API JSON 
+description: I have spent some time implementing token based
+authentication for an API using devise gem. I couldn't find a sample
+working application which does the same. So I created one. 
+---
+
+<div dir="ltr" style="text-align: left;" trbidi="on">
+  Currently I am working on a project which has both API and mobile
+  apps. I had to implement authentication for the API. Since I have to
+  implement the authentication for the non browser clients (iOS,
+  Android) I won't be able to use session based authentication. So I
+  started implementing token based authentication. I am using Devise
+  gem for token based authentication. 
+  <br /><br />
+  <a href="https://github.com/plataformatec/devise">Devise</a> is a flexible authentication solution for Rails
+  applications. If you <a href="https://www.ruby-toolbox.com/categories/rails_authentication.html">search
+  in ruby tool box</a> you will see that Devise is
+  the most popular rails authentication plugin. Devise supports token
+  based authentication too.
+  <br /><br />
+  <a href="https://github.com/plataformatec/devise/wiki/How-To:-Simple-Token-Authentication-Example">Token based authentication</a> means authentication using a token
+  instead of a session cookie. Since non browser clients won't support
+  session cookies we can't use session based authentication. There is
+  another approach that is to <a href="https://developers.google.com/accounts/docs/MobileApps">embed a web browser</a>. 
+  <br /><br />
+  By default devise won't support JSON. For that we have to add
+  respond_to :json to the controller to override the default
+  behavior. Even after adding respond_to to the controller some devise
+  actions will do redirect instead of responding with proper json
+  data. So we should override the devise controllers to implement
+  custom json response. 
+  <br /><br />
+  I was searching for some sample application which implemented the
+  Token based authentication for API using devise gem. But I couldn't
+  find any sample working application. So I <a href="https://github.com/abhidsm/devise-token-api">created one</a> for future
+  reference. Please let me know your feedback.
+  <br /><br />
+</div>
