@@ -1,0 +1,66 @@
+---           
+layout: post
+title: Deploying a Rails app to a Sub URI
+categories: ruby rails capistrano nginx deploy sub uri passenger_base_uri route scope 
+description: Deploying Rails app to a Sub URI requires some extra configurations. This post explains about how to configure a Rails app so that it can be deployed to a Sub URI.
+---
+
+<div dir="ltr" style="text-align: left;" trbidi="on">
+  Recently I was working on a POC application. And I had to deploy
+  that application to show a demo. Since it is a POC app I had to
+  deploy it as a Sub URI of an existing app.
+  <br /><br />
+  I modified the nginx conf file to set up the sub URI, based on the
+  information from <a href="http://www.modrails.com/documentation/Users%20guide%20Nginx.html#deploying_rails_to_sub_uri">this
+  doc</a>. I have added <b>passenger_base_uri</b> option to the conf,
+  but that was just starting the application from the sub URI. All the
+  URLs in the application is using the base URL instead of the sub URI.
+  <br /><br />
+  To make all the URLs from the application use the sub URI as the
+  base URL, I had to add a scope in the routes:
+  <pre class="prettyprint">
+SubUriApp::Application.routes.draw do
+  my_draw = Proc.new do
+   devise_for :users
+  end
+
+  if ENV['RAILS_RELATIVE_URL_ROOT']
+   scope ENV['RAILS_RELATIVE_URL_ROOT'] do
+     my_draw.call
+   end
+  else
+   my_draw.call
+  end
+end
+  </pre></br>
+  The scope I added to the routes was not working with the
+  passenger_base_uri added to the nginx conf. So I have to modify the
+  nginx conf like the following: 
+  <pre class="prettyprint">
+server {
+        listen 80;
+        server_name base_url.com;
+	location / {
+        	root /www/base_url.com/current/public;
+	        rails_env production;
+        	passenger_enabled on;
+	}
+
+	location /sub_uri {
+        	root /www/sub_uri/current/public;
+	        rails_env production;
+        	passenger_enabled on;
+	}
+    }
+  </pre><br />
+  Even after these changes the assets were loaded from the base URL. I
+  had to set the following configuration in the environment file
+  (production.rb) to make it work:
+  <pre class="prettyprint">
+ENV['RAILS_RELATIVE_URL_ROOT'] = "/sub_uri"
+config.assets.prefix = ENV['RAILS_RELATIVE_URL_ROOT']
+  </pre>
+  <br />
+  At last the application started working like a normal application
+  from the sub URI :)
+</div>
