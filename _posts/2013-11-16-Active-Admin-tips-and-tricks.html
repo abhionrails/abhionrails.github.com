@@ -1,0 +1,101 @@
+---           
+layout: post
+title: Active Admin tips and tricks
+categories: ruby rails active admin tips tricks
+description: Active admin is a great tool which helps us to easily setup admin console. But if you know some cool stuff that can be done with Active Admin, it will be more cool.
+---
+
+<div dir="ltr" style="text-align: left;" trbidi="on">
+  For my current project I had to setup Admin console. I used Active
+  Admin for that purpose. It is very easy to setup an Admin
+  console. And they have a very
+  good <a href="http://www.activeadmin.info/documentation.html">documentation</a>. But
+  if you want make some customization you have to spent some time
+  digging for solution. Following are some customization I made to
+  improve the Admin console: 
+  <br /><br />
+  <h1>1.member_label</h1>
+  If you are using select box for showing association in form page or
+  filters, it will show the object string if there is no attribute
+  'name' for that model. By default the select box will take the name
+  attribute of the model as the values. So you have to use member_label to specify
+  the attribute you want to show in the select box. 
+  <pre class="prettyprint">
+f.input :user, :as => :select, :member_label => :email
+  </pre>
+  <br />
+  <h1>2.Custom Menu</h1>
+  I had to modify the menus by grouping some menus to sub-menus. I
+  have added the following code to initializers/active_admin.rb:
+  <pre class="prettyprint">
+ admin.build_menu do |menu|
+   menu.add :label => "Product", :priority => 2
+ end
+  </pre></br>
+  This will create a main menu 'Product'. To add sub-menus you have to
+  mention this menu as the parent.
+  <pre class="prettyprint">
+ menu :parent => "Product", :priority => 3
+  </pre></br>
+  Here priority is the order in which we need to show the sub-menu.
+  <br /><br />
+  <h1>3.Custom Actions</h1>
+  For one model Admin doesn't have the privilege to create new
+  record. So I have to remove the new action from the Admin
+  console. So I added the following code:
+  <pre class="prettyprint">
+actions :all, :except => [:new]
+  </pre>
+  <br />
+  <h1>4.Columns in show page</h1>
+  For one of my model, in the show page I felt there are lots of space
+  available in the right side. But to show something in the right side
+  I had to customize the show page. So I used columns to show multiple
+  associated data in the show page:
+  <pre class="prettyprint">
+show do |product_request|
+  columns do
+    column do
+      attributes_table do
+        row :id
+        row :user
+      end
+    end
+
+    column do
+      active_admin_comments
+    end
+  end
+    
+  columns do
+    column do
+      h3 "Businesses"
+      table_for resource.businesses do 
+        column :id
+        column :business
+      end
+    end
+
+    column do
+      h3 "Products"
+      table_for resource.products do 
+        column :id
+        column :product
+      end
+    end
+  end
+end
+  </pre>
+  <br />
+  <h1>5.Link to filter of another model</h1>
+  For one of the models (For Eg. User) I had to show a link in the index page to
+  show list of associated data (For Eg. Business) ie., I have to show
+  the index page of business with a filter of user.
+  <pre class="prettyprint">
+column "Businesses" do |user|
+  link_to "Click", :controller => "businesses", 
+                   :action => "index", 'q[user_id_eq]' => "#{user.id}".html_safe
+end
+  </pre>
+  <br />
+</div>
