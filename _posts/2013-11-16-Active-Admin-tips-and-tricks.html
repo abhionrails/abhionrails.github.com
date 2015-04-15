@@ -98,4 +98,38 @@ column "Businesses" do |user|
 end
   </pre>
   <br />
+  <h1>6.Implementing Authorization</h1>
+  In one of my project I had implemented both User model (for consumers) and Admin
+  User model (for Active Admin). But later more and more roles got
+  added to the Consumer user and we had to implement same set of
+  features in both Active Admin and the user side. Some of the User
+  roles like "Managers" need some of the reports which were already
+  present for Admin. 
+  <br />
+  So I decided to merge User and AdminUser models. Keep only User
+  model as it has more entries than AdminUser model. To implement this
+  we need to make only a small change in the Active Admin initializer.
+  <pre class="prettyprint">
+    # config/initializers/active_admin.rb
+    ActiveAdmin.setup do |config|
+    ...
+    config.current_user_method = :current_user
+    config.logout_link_path = :destroy_user_session_path
+    # config.skip_before_filter :authenticate_user!
+    ...
+    end
+  </pre>
+  <br />
+  The next step was to show/hide the Active Admin menus based on the
+  roles. It was pretty much simple, just need to implement the role
+  checking functions in the User model and use that in the
+  corresponding Active Admin resource pages.
+  <pre class="prettyprint">
+    # app/admin/post.rb
+    ActiveAdmin.register Post do
+    menu :if => proc{ current_user.manager? }
+    ...
+    end
+  </pre>
+  <br />
 </div>

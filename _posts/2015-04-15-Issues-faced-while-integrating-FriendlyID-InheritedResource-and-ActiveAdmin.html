@@ -1,0 +1,58 @@
+---           
+layout: post
+title: Integrating FriendlyID, Inherited Reource and Active Admin
+categories: ruby rails active admin friendly id inherited resource issues
+description: The issues and its solution while integrating friendly id with active admin and inherited resource.
+---
+
+<div dir="ltr" style="text-align: left;" trbidi="on">
+  <p>For my latest spare time
+  project <a href="http://www.kazhakkoottam.com">Kazhakkoottam</a> I
+  had to integrate friendly id with the app. But the application was
+  already integrated and running with Inherited Resource and Active
+  Admin. So while integrating with friendly id I have faced some
+  issues.</p>
+  <p>
+  So why we need to use friendly id?
+  <br/>
+  <a href="https://github.com/norman/friendly_id">FriendlyId</a> is
+  used to implement pretty URL's, so that it will be SEO friendly and
+  can be identified easily. Instead of id's you can configure name or
+  title field as the slug. For example
+  http://www.kazhakkoottam.com/items/krishna-theatre is the friendly
+  id for http://www.kazhakkoottam.com/items/1.
+  </p>
+  <p>
+  Integration issue with Inherited Resource
+  <br/>
+  The first issue I faced was in the show page of an Item in
+  ItemsController. ActiveRecord::RecordNotFound Couldn't find Item
+  with id=lorem-ipsum. The reason is Inherited resource was using
+  Item.find instead of Item.friendly.find()
+  <br/>
+  Added the following code to the ItemsController to fix this issue:
+  <pre class="prettyprint">
+    # app/controllers/items_controller.rb
+    defaults resource_class: Item.friendly
+  </pre>
+  </p>
+  <p>
+    Integration issue with Active Admin
+    <br/>
+    Then I faced the same issue with Active Admin while accessed the show
+    page of the item from Admin console. The solution was to add the
+    following code to the active admin file for item.
+    <pre class="prettyprint">
+      # app/admin/item.rb
+      controller do
+        def find_resource
+          scoped_collection.friendly.find(params[:id])
+        end
+      end
+    </pre>
+  </p>
+  <p>
+    Now I got the pretty URL integrated with my app which is SEO
+    friendly and can be identified easily.
+  </p>
+</div>
