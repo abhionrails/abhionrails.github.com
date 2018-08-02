@@ -1,8 +1,8 @@
----           
+---
 layout: post
 title: Active Admin - Custom Pages, Views and Actions
 categories: ruby rails active admin custom pages custom views custom actions filters
-description: Active Admin a Ruby on Rails plugin for generating Admin console for your application. You can customize almost all the functionalities of Active Admin. Custom pages, custom views, custom, actions, custom action items, custom filters. 
+description: Active Admin a Ruby on Rails plugin for generating Admin console for your application. You can customize almost all the functionalities of Active Admin. Custom pages, custom views, custom, actions, custom action items, custom filters.
 ---
 
 <div dir="ltr" style="text-align: left;" trbidi="on">
@@ -18,62 +18,16 @@ description: Active Admin a Ruby on Rails plugin for generating Admin console fo
   </p>
   <p>
     But what if in your application you need an Admin page where you want to show some calculated data of a model or multiple models which is obviously not a resource file. You can create custom pages:
-    <pre class="prettyprint">
-      # app/admin/calendar.rb
-      ActiveAdmin.register_page "Calendar" do
-        content do
-          render partial: 'calendar', :locals => {:transactions => Transaction.all}
-        end
-      end
-    </pre>
   </p>
+  <script src="https://gist.github.com/abhidsm/9abb3331e61e1e8678671a7a9d812cbd.js?file=calendar.rb"></script>
   <p>
     Now you can put your view/html content in the partial:
-    <xmp class="prettyprint lang-html">
-      # App/views/admin/calendar/_calendar.html.arb
-      <table>
-      <tr>
-      <th>Date</th>
-      <th>From</th>
-      </tr>
-      <% transactions.each do |transaction| %>
-       <tr>
-         <td><%= transaction[:date] %></td>
-         <td><%= transaction[:type] %></td>
-       </tr>
-      <% end %>
-      </table>
-      <%= paginate transactions %>
-    </xmp>
   </p>
+  <script src="https://gist.github.com/abhidsm/9abb3331e61e1e8678671a7a9d812cbd.js?file=_calendar.html.arb"></script>
   <p>
     This is enough to create a simple custom page which will show the data in a customized view. But in some situation you need a button to perform some operations like download the data. In those situations you need custom action and action item. Modified custom page:
-    <pre class="prettyprint">
-      # app/admin/calendar.rb
-      ActiveAdmin.register_page "Calendar" do
-        content do
-          render partial: 'calendar', :locals => {:transactions => Transaction.all}
-        end
-        
-        page_action :csv, method: :get do
-          transactions = Transaction.all.page(params[:page]).per(Transaction::ADMIN_PAGE_LIMIT)
-          csv = CSV.generate( encoding: 'Windows-1251' ) do |csv|
-            # add headers
-            csv << [ "Date", "From"]
-            transactions.each do |transaction|
-              csv << [ transaction[:date], transaction[:type]]
-            end     
-          end
-          # send file to user
-          send_data csv.encode('Windows-1251'), type: 'text/csv; charset=windows-1251; header=present', disposition: "attachment; filename=transactions_#{DateTime.now.to_s}.csv"
-        end
-        
-        action_item :add do
-          link_to "Export to CSV", admin_calendar_csv_path, method: :get
-        end
-      end
-    </pre>
   </p>
+  <script src="https://gist.github.com/abhidsm/9abb3331e61e1e8678671a7a9d812cbd.js?file=updated_calendar.rb"></script>
   <p>
     You can also add custom filters to filter the data. You just need to add the following line to the custom page:
     <pre class="prettyprint">
@@ -82,28 +36,12 @@ description: Active Admin a Ruby on Rails plugin for generating Admin console fo
   </p>
   <p>
     and create a view for the filter partial
-    <xmp class="prettyprint">
-      # app/views/admin/calendar/_filter.html.arb
-      <%= form_tag("/admin/calendar", method: "get", class: "filter_form") do %>
-       <div class="filter_form_field">
-         <%= label_tag(:type, "From") %>
-         <%= select_tag(:type, options_for_select([['All', 'all'], ['Type1', 'type1'], ['Type2', 'type2']], params[:type])) %>
-       </div>
-       <div class="filter_form_field">
-         <%= label_tag(:date, "Date") %>
-         <%= date_field_tag(:date, params[:date]) %>
-       </div>
-       <div class="buttons">
-         <input type="submit" name="commit" value="Filter">
-         <a class="clear_filters_btn" href="/admin/Calendar">Clear Filters</a>
-       </div>
-      <% end %>
-    </xmp>
   </p>
+  <script src="https://gist.github.com/abhidsm/9abb3331e61e1e8678671a7a9d812cbd.js?file=_filter.html.arb"></script>
   <p>
     You need to use the filter params in your custom page to filter the data:
     <pre class="prettyprint">
-      Transaction.where(:type => /.*#{params[:type]}.*/) 
+      Transaction.where(:type => /.*#{params[:type]}.*/)
     </pre>
   </p>
   <p>
