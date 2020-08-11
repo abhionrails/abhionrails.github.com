@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Abhi On Rails
-description: Ruby On Rails - What I learned recently
+description: My experience with Ruby On Rails 
 ---
 
 {% for post in paginator.posts %}
@@ -14,9 +14,7 @@ description: Ruby On Rails - What I learned recently
 <h1><a href="{{ post.url }}">{{ post.title }}</a></h1>
 </header>
 
-{{ post.content }}
-{% include share_this.html %}
-<p class="full-post"><a class="small" href="{{ post.url }}#disqus_thread">comments...</a></p>
+{{ post.excerpt }}<a href="{{ post.url }}">Read More...</a>
 </article>
 <div class="separator">
 <image src="/images/blog-post-separator.png" />

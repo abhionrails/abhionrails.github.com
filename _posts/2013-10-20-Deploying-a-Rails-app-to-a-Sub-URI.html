@@ -2,6 +2,7 @@
 layout: post
 title: Deploying a Rails app to a Sub URI
 categories: ruby rails capistrano nginx deploy sub uri passenger_base_uri route scope 
+tags: ruby rails capistrano nginx deploy sub uri passenger_base_uri route scope 
 description: Deploying Rails app to a Sub URI requires some extra configurations. This post explains about how to configure a Rails app so that it can be deployed to a Sub URI.
 ---
 
@@ -33,6 +34,7 @@ SubUriApp::Application.routes.draw do
   end
 end
   </pre></br>
+  <!--more-->
   The scope I added to the routes was not working with the
   passenger_base_uri added to the nginx conf. So I have to modify the
   nginx conf like the following: 

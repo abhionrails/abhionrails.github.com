@@ -1,7 +1,9 @@
 exclude: ['Rakefile', 'README.markdown', 'Gemfile', 'Gemfile.lock']
 growl: true
-paginate: 3
+paginate: 5
 permalink: pretty
 highlighter: rouge
 host: abhionrails.com
 plugins: ['jekyll-paginate']
+future: true
+excerpt_separator: <!--more-->

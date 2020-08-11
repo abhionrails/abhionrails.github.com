@@ -4,6 +4,7 @@ title: marked for destruction
 date: Fri Nov 04 17:04:00 UTC 2011
 comments: false
 categories: ruby marked for destruction auto save association auto save ruby on rails rails marked_for_destruction active record base
+tags: ruby marked for destruction auto save association auto save ruby on rails rails marked_for_destruction active record base
 description: Today I had gone through an issue, which got fixed by using the marked_for_destruction? method. This marked_for_destruction is part of Active Record Autosave Association module. Autosave Association module takes care of automatically saving associated records when their parent is saved.
 ---
 
@@ -23,6 +24,7 @@ description: Today I had gone through an issue, which got fixed by using the mar
     directory model I added a validation in the after_save callback,
     which will check the count of Categories is greater that 0.
   <br /><br />
+  <!--more-->
   But while we do the update directory if I deleted all the
     categories&nbsp;the validation won't work , because I am using
     Autosave Association, which &nbsp;saves category only after
